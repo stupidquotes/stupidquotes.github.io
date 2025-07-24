@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stupid Quotes</title>
+  <style>
+    body {
+      background-color: #f5f5dc;
+      border: 1px solid navy;
+      padding: 30px;
+      margin: 40px auto;
+      max-width: 650px;
+      font-family: Arial, sans-serif;
+      color: navy;
+      box-sizing: border-box;
+    }
+    h1 {
+      text-align: center;
+      color: navy;
+    }
+    .input-box {
+      border: 1px solid navy;
+      padding: 10px;
+      margin-top: 20px;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .quote {
+      font-style: italic;
+      margin-top: 10px;
+    }
+    .author {
+      text-align: right;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Stupid Quotes</h1>
+  <div class="input-box">
+    <input type="text" id="quoteInput" placeholder="Type here..." />
+    <button onclick="submitQuote()">Add</button>
+  </div>
+  <div id="quoteList"></div>
+
+  <script>
+    let isAuthorNext = false;
+    let savedQuotes = JSON.parse(localStorage.getItem('stupidQuotes')) || [];
+
+    function renderQuotes() {
+      const quoteList = document.getElementById('quoteList');
+      quoteList.innerHTML = '';
+      savedQuotes.forEach(item => {
+        const div = document.createElement('div');
+        div.className = item.type;
+        div.textContent = item.type === 'quote' ? `"${item.text}"` : `– ${item.text}`;
+        quoteList.appendChild(div);
+      });
+      isAuthorNext = savedQuotes.length % 2 !== 0;
+    }
+
+    function submitQuote() {
+      const input = document.getElementById('quoteInput');
+      const text = input.value.trim();
+      if (text === '') return;
+
+      const type = isAuthorNext ? 'author' : 'quote';
+      savedQuotes.push({ type, text });
+      localStorage.setItem('stupidQuotes', JSON.stringify(savedQuotes));
+
+      input.value = '';
+      renderQuotes();
+    }
+
+    // ⌨️ Enter key submits the input
+    document.getElementById("quoteInput").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        submitQuote();
+      }
+    });
+
+    renderQuotes();
+  </script>
+</body>
+</html>
